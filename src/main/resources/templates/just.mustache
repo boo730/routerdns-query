@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Just Query Logs</title>
+</head>
+<body>
+<h1>DNS query</h1>
+<ul id="logs">
+
+<!-- Mustache 템플릿 추가 -->
+<script id="mustacheTemplate" type="text/template">
+        {{#logs}}
+        <li>{{id}} - {{t}} - {{qh}}</li>
+        {{/logs}}
+</script>
+</ul>
+<script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
+<script>
+    // 서버에서 받은 JSON 데이터를 JavaScript 객체로 변환
+    const logsJson = {{logs}};
+    const logsData = JSON.parse(logsJson);
+
+    // Mustache 템플릿 렌더링
+    const template = document.getElementById('mustacheTemplate').innerHTML;
+    const rendered = Mustache.render(template, { logs: logsData });
+    document.getElementById('logs').innerHTML = rendered;
+</script>
+</body>
+</html>
