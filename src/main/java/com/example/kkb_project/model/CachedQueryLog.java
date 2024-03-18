@@ -21,6 +21,5 @@ public class CachedQueryLog {
     private String result;
     private String elapsed;
     private boolean cached;
-    // getter, setter 등 필요한 메서드 추가
 }
 
