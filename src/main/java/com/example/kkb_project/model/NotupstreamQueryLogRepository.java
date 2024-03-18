@@ -2,6 +2,9 @@ package com.example.kkb_project.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 public interface NotupstreamQueryLogRepository extends JpaRepository<NotupstreamQueryLog, Long> {
-    // JustQueryLog 엔티티에 맞는 추가적인 메서드 정의
+    List<NotupstreamQueryLog> findByTBetween(LocalDateTime startOfDay, LocalDateTime endOfDay);
 }

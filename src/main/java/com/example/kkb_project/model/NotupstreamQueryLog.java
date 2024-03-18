@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "notUpstream_querylog")
+@Table(name = "notupstream_querylog")
 public class NotupstreamQueryLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,5 +20,4 @@ public class NotupstreamQueryLog {
     private String ip;
     private String result;
     private String elapsed;
-    // getter, setter 등 필요한 메서드 추가
 }

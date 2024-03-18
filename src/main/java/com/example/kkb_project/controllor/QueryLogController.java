@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-import com.google.gson.Gson;
 
 import java.time.*;
 import java.util.List;
@@ -21,8 +20,6 @@ public class QueryLogController {
     private final NotupstreamQueryLogRepository notupstreamQueryLogRepository;
     private final CachedQueryLogRepository cachedQueryLogRepository;
 
-    Gson gson = new Gson();
-
     @Autowired
     public QueryLogController(JustQueryLogRepository justQueryLogRepository,
                               NotupstreamQueryLogRepository notupstreamQueryLogRepository,
@@ -30,50 +27,80 @@ public class QueryLogController {
         this.justQueryLogRepository = justQueryLogRepository;
         this.notupstreamQueryLogRepository = notupstreamQueryLogRepository;
         this.cachedQueryLogRepository = cachedQueryLogRepository;
-        }
+    }
 
 
     @GetMapping("/just")
-    public ModelAndView getJustQueryLogs(@RequestParam("startDate") String startDateStr,
-                                         @RequestParam("endDate") String endDateStr, Model model) {
+    public ModelAndView getJustQueryLogs(@RequestParam("date") String dateStr,
+                                         @RequestParam(value = "page", defaultValue = "0") int page,
+                                         @RequestParam(value = "size", defaultValue = "50") int size, Model model) {
+
         ModelAndView justView = new ModelAndView("just");
 
+        LocalDate date = LocalDate.parse(dateStr);
 
-        LocalDate startDate = LocalDate.parse(startDateStr);
-        LocalDate endDate = LocalDate.parse(endDateStr);
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(23, 59, 59);
 
-        LocalDateTime startOfDay = startDate.atStartOfDay();
-        LocalDateTime endOfDay = endDate.atTime(23, 59, 59);
+        int startIndex = page * size;
 
         List<JustQueryLog> justQueryLogs = justQueryLogRepository.findByTBetween(startOfDay, endOfDay);
-        String logsJson = gson.toJson(justQueryLogs);
-        model.addAttribute("logs", justQueryLogs);
 
-        // Mustache 템플릿 파일의 경로를 반환
+        int endIndex = Math.min(startIndex + size, justQueryLogs.size());
+        List<JustQueryLog> pageJustQueryLogs = justQueryLogs.subList(startIndex, endIndex);
+
+        model.addAttribute("logs", pageJustQueryLogs);
+
         return justView;
     }
 
     @GetMapping("/notup")
-    public List<NotupstreamQueryLog> getAllNotupstreamQueryLogs() {
-        return notupstreamQueryLogRepository.findAll();
+    public ModelAndView getNotupstreamQueryLogs(@RequestParam("date") String dateStr,
+                                                @RequestParam(value = "page", defaultValue = "0") int page,
+                                                @RequestParam(value = "size", defaultValue = "50") int size, Model model) {
+
+        ModelAndView notupstreamView = new ModelAndView("notup");
+
+        LocalDate date = LocalDate.parse(dateStr);
+
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(23, 59, 59);
+
+        int startIndex = page * size;
+
+        List<NotupstreamQueryLog> notupstreamQueryLogs = notupstreamQueryLogRepository.findByTBetween(startOfDay, endOfDay);
+
+        int endIndex = Math.min(startIndex + size, notupstreamQueryLogs.size());
+        List<NotupstreamQueryLog> pageNotupstreamQueryLogs = notupstreamQueryLogs.subList(startIndex, endIndex);
+
+        model.addAttribute("logs", pageNotupstreamQueryLogs);
+
+        return notupstreamView;
+
     }
 
     @GetMapping("/cached")
-    public List<CachedQueryLog> getAllCachedQueryLogs() {
-        return cachedQueryLogRepository.findAll();
-    }
+    public ModelAndView getCachedQueryLogs(@RequestParam("date") String dateStr,
+                                                   @RequestParam(value = "page", defaultValue = "0") int page,
+                                                   @RequestParam(value = "size", defaultValue = "50") int size, Model model) {
 
-    /*
-    // 오늘의 시작 시각을 가져오는 메서드
-    private Date getStartOfDay() {
-        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
-        return Date.from(startOfDay.atZone(ZoneId.systemDefault()).toInstant());
-    }
+        ModelAndView cachedView = new ModelAndView("cached");
 
-    // 오늘의 끝 시각을 가져오는 메서드
-    private Date getEndOfDay() {
-        LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
-        return Date.from(endOfDay.atZone(ZoneId.systemDefault()).toInstant());
+        LocalDate date = LocalDate.parse(dateStr);
+
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(23, 59, 59);
+
+        int startIndex = page * size;
+
+        List<CachedQueryLog> cachedQueryLogs = cachedQueryLogRepository.findByTBetween(startOfDay, endOfDay);
+
+        int endIndex = Math.min(startIndex + size, cachedQueryLogs.size());
+        List<CachedQueryLog> pageCachedQueryLogs = cachedQueryLogs.subList(startIndex, endIndex);
+
+        model.addAttribute("logs", pageCachedQueryLogs);
+
+        return cachedView;
+
     }
-    */
 }
