@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "notupstream_querylog")
+@Table(name = "notupstream_querylog",indexes = @Index(name = "idx_t", columnList = "T"))
 public class NotupstreamQueryLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

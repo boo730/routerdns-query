@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "just_querylog")
+@Table(name = "just_querylog", indexes = {@Index(name = "idx_t", columnList = "T")})
 public class JustQueryLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

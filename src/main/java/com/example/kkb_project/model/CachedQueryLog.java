@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "cached_querylog")
+@Table(name = "cached_querylog",indexes = @Index(name = "idx_t",columnList = "T"))
 public class CachedQueryLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
